@@ -4,6 +4,18 @@
 CURRENT_DIR=$(pwd)
 SCRIPT_NAME=$(basename "$0")
 
+echo "Pre check"
+# 检查当前目录
+files_in_dir=$(ls -A | grep -v "^${SCRIPT_NAME}$")
+if [ -z "$files_in_dir" ]; then
+    echo "Current directory is empty. Skip..."
+    echo "--------------------------------------------"
+    exit 0
+else
+    echo "Current directory is not empty. Continue..."
+    echo "--------------------------------------------"
+fi
+
 echo "Step 1: Creating 'todo' and 'todelete' directories"
 # 新建 todo 和 todelete 目录
 mkdir -p "$CURRENT_DIR/todo"
@@ -128,13 +140,20 @@ for path in "$CURRENT_DIR/todo/"*; do
     if [[ -f "$path" ]]; then
         base="$(basename "$path")"
         filename="${base%.*}"
-        
+
         echo "Creating directory: $CURRENT_DIR/todo/$filename and moving file $path"
         mkdir -p "$CURRENT_DIR/todo/$filename"
         mv "$path" "$CURRENT_DIR/todo/$filename/"
     fi
 done
 echo "Step 4: Directories created and files moved"
+echo "--------------------------------------------"
+
+echo "Step 5: Clear"
+# 清理 todelete 目录
+echo "Deleting directory: $CURRENT_DIR/todelete"
+rm -rf "$CURRENT_DIR/todelete"
+echo "Step 5: Clear finished"
 echo "--------------------------------------------"
 
 echo "Script execution completed successfully."
